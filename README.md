@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/rajatslakhina/seat-entitlement-kit-demo-app/actions/workflows/ci.yml/badge.svg)](https://github.com/rajatslakhina/seat-entitlement-kit-demo-app/actions/workflows/ci.yml)
 
-It is the runnable companion to **[SeatEntitlements](https://github.com/rajatslakhina/seat-entitlement-kit)**, a seat-aware entitlement service for iOS multiseat / Volume Purchasing subscriptions and Suites. The app consumes the library as a **remote Swift package pinned to a release** (`upToNextMajorVersion` from `1.1.0`), the way a real team would. It is never a local path or a branch.
+It is the runnable companion to **[SeatEntitlements](https://github.com/rajatslakhina/seat-entitlement-kit)**, a seat-aware entitlement service for iOS multiseat / Volume Purchasing subscriptions and Suites. The app consumes the library as a **remote Swift package pinned to a release** (`upToNextMajorVersion` from `1.1.1`), the way a real team would. It is never a local path or a branch.
 
 <p align="center">
   <img src="Demo/Screenshots/1-verified.png" width="23%" alt="Fresh signed state: all three features allowed and verified">
@@ -68,7 +68,7 @@ The scheme carries these as disabled launch arguments, so you can switch them on
 ## How to run it
 
 1. `git clone https://github.com/rajatslakhina/seat-entitlement-kit-demo-app.git`
-2. Open `Demo.xcodeproj` in Xcode 16 or later. Xcode resolves `seat-entitlement-kit` from GitHub at the pinned release (1.1.0 or a later 1.x).
+2. Open `Demo.xcodeproj` in Xcode 16 or later. Xcode resolves `seat-entitlement-kit` from GitHub at the pinned release (1.1.1 or a later 1.x).
 3. Select the **Demo** scheme and any iPhone or iPad Simulator running iOS 17 or later.
 4. Build & Run (⌘R).
 
@@ -77,7 +77,7 @@ No signing team is needed for the Simulator. The project has no other dependenci
 ## How it is wired
 
 - `Demo/DemoApp.swift`: the `@main` app. It owns every product decision the library leaves open: the features and their failure modes, the `GracePolicy` (6 h fresh + 72 h offline grace, so a worst-case offline revocation latency of 78 h), the `RefreshScheduler` (6 h interval, 1 h spread window, 30 s → 10 min full-jitter backoff), the seat roster and the herd scenario. It passes them to `SeatConsoleView` from the library's `SeatEntitlementsUI` product.
-- `Demo.xcodeproj`: one app target. `XCRemoteSwiftPackageReference` points at `https://github.com/rajatslakhina/seat-entitlement-kit.git`, `upToNextMajorVersion` from `1.1.0`, and links both `SeatEntitlements` and `SeatEntitlementsUI`. `GENERATE_INFOPLIST_FILE = YES`, and a shared `Demo` scheme is committed.
+- `Demo.xcodeproj`: one app target. `XCRemoteSwiftPackageReference` points at `https://github.com/rajatslakhina/seat-entitlement-kit.git`, `upToNextMajorVersion` from `1.1.1`, and links both `SeatEntitlements` and `SeatEntitlementsUI`. `GENERATE_INFOPLIST_FILE = YES`, and a shared `Demo` scheme is committed.
 - `Scripts/simulator-screenshots.sh`: builds for a real Simulator device, installs, launches the four scripted states, checks the app is still running after each, and captures screenshots.
 
 ## Verification
@@ -87,7 +87,7 @@ What was actually done, stated separately:
 - **Builds against the released package (CI, job "Resolve remote package and build").** On `macos-15`, `xcodebuild -resolvePackageDependencies` resolves `seat-entitlement-kit` from GitHub at the pinned release. The resolved version is printed from `Package.resolved`, then `xcodebuild build -scheme Demo -destination 'generic/platform=iOS Simulator'` runs. Green.
 - **Ran on an iOS Simulator (CI, job "Install, launch and screenshot").** On the same runner image, `Scripts/simulator-screenshots.sh` picks an iPhone simulator matching the installed iOS Simulator SDK (iOS 18.5, iPhone 16 Pro on the first run). It then builds, installs, launches the app in each of the four scripted states, checks the process is still alive after each scenario has played out, and captures the screenshots above. The PNGs are committed back by the workflow and uploaded as a run artifact.
 - **Not run on the author's own Mac.** The scheduled job that builds these repos was granted Simulator/Xcode access on the author's Mac, but Xcode had an unrelated real project open, so it deliberately did not touch it. Nobody has tapped through the buttons by hand. The screenshots show the four *scripted* states. The library behaviour each button drives is covered by the library's core tests. The console model itself (`SeatConsoleModel`) and the buttons have no automated tests.
-- The library's own verification (96 Linux / 97 macOS XCTests, 27 killed mutations, warnings-as-errors builds) is described in [its README](https://github.com/rajatslakhina/seat-entitlement-kit#verification).
+- The library's own verification (100 Linux / 101 macOS XCTests, 29 killed mutations, warnings-as-errors builds) is described in [its README](https://github.com/rajatslakhina/seat-entitlement-kit#verification).
 
 Current status of every job: [Actions](https://github.com/rajatslakhina/seat-entitlement-kit-demo-app/actions).
 
